@@ -45,7 +45,7 @@ mongoose.connect(config.DATABASE,{useNewUrlParser: true, useUnifiedTopology: tru
 .catch(err => {
 console.log(Error, err.message);
 });
-
+app.use(express.static('client/build'))
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({
@@ -215,10 +215,15 @@ app.post('/api/auditories',(req,res)=>{
 const port = process.env.PORT || 3001;
 
 
+// if(process.env.NODE_ENV === 'production'){
+// 	app.use(express.static('client/build'))
+// }
 if(process.env.NODE_ENV === 'production'){
-	app.use(express.static('client/build'))
+    const path = require('path');
+    app.get('/*',(req,res)=>{
+        res.sendfile(path.resolve(__dirname,'../client','build','index.html'))
+    })
 }
-
 
 
 app.listen(port, ()=>{
